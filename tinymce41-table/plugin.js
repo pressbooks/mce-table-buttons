@@ -1688,6 +1688,10 @@ define("tinymce/tableplugin/Dialogs", [
 					delete data[name];
 				});
 
+				if (data["extra-class"] !== false) {
+					data["class"] += " " + data["extra-class"];
+				}
+
 				if (data["class"] === false) {
 					delete data["class"];
 				}
@@ -1740,6 +1744,8 @@ define("tinymce/tableplugin/Dialogs", [
 				tableElm = dom.getParent(editor.selection.getStart(), 'table');
 
 				if (tableElm) {
+					var className = dom.getAttrib(tableElm, 'class');
+					var classNames = className.split(" ");
 					data = {
 						width: removePxSuffix(dom.getStyle(tableElm, 'width') || dom.getAttrib(tableElm, 'width')),
 						height: removePxSuffix(dom.getStyle(tableElm, 'height') || dom.getAttrib(tableElm, 'height')),
@@ -1747,7 +1753,8 @@ define("tinymce/tableplugin/Dialogs", [
 						cellpadding: tableElm ? dom.getAttrib(tableElm, 'cellpadding') : '',
 						border: tableElm ? dom.getAttrib(tableElm, 'border') : '',
 						caption: !!dom.select('caption', tableElm)[0],
-						'class': dom.getAttrib(tableElm, 'class')
+						'class': classNames[0],
+						'extra-class': classNames[1],
 					};
 
 					each('left center right'.split(' '), function(name) {
@@ -1765,11 +1772,14 @@ define("tinymce/tableplugin/Dialogs", [
 				if (data["class"]) {
 					data["class"] = data["class"].replace(/\s*mce\-item\-table\s*/g, '');
 				}
+				if (data["extra-class"]) {
+					data["extra-class"] = data["extra-class"].replace(/\s*mce\-item\-table\s*/g, '');
+				}
 
 				classListCtrl = {
 					name: 'class',
 					type: 'listbox',
-					label: 'Class',
+					label: 'Table type',
 					values: buildListItems(
 						editor.settings.table_class_list,
 						function(item) {
@@ -1803,11 +1813,11 @@ define("tinymce/tableplugin/Dialogs", [
 						items: [
 							colsCtrl,
 							rowsCtrl,
-							{label: 'Width', name: 'width'},
-							{label: 'Height', name: 'height'},
-							{label: 'Cell spacing', name: 'cellspacing'},
-							{label: 'Cell padding', name: 'cellpadding'},
-							{label: 'Border', name: 'border'},
+							// {label: 'Width', name: 'width'},
+							// {label: 'Height', name: 'height'},
+							// {label: 'Cell spacing', name: 'cellspacing'},
+							// {label: 'Cell padding', name: 'cellpadding'},
+							// {label: 'Border', name: 'border'},
 							{label: 'Caption', name: 'caption', type: 'checkbox'}
 						]
 					},
@@ -1825,7 +1835,13 @@ define("tinymce/tableplugin/Dialogs", [
 						]
 					},
 
-					classListCtrl
+					classListCtrl,
+
+					{
+						label: 'Custom class',
+						name: 'extra-class',
+						type: 'textbox',
+					}
 				]
 			};
 
@@ -1955,7 +1971,9 @@ define("tinymce/tableplugin/Dialogs", [
 				classListCtrl = {
 					name: 'class',
 					type: 'listbox',
-					label: 'Class',
+					label: 'Cell style',
+					minWidth: 90,
+					maxWidth: null,
 					values: buildListItems(
 						editor.settings.table_cell_class_list,
 						function(item) {
@@ -1988,7 +2006,7 @@ define("tinymce/tableplugin/Dialogs", [
 						},
 						items: [
 							{label: 'Width', name: 'width'},
-							{label: 'Height', name: 'height'},
+							// {label: 'Height', name: 'height'},
 							{
 								label: 'Cell type',
 								name: 'type',
@@ -2001,6 +2019,7 @@ define("tinymce/tableplugin/Dialogs", [
 									{text: 'Header cell', value: 'th'}
 								]
 							},
+							classListCtrl,
 							{
 								label: 'Scope',
 								name: 'scope',
@@ -2046,8 +2065,6 @@ define("tinymce/tableplugin/Dialogs", [
 							}
 						]
 					},
-
-					classListCtrl
 				]
 			};
 
@@ -2171,7 +2188,7 @@ define("tinymce/tableplugin/Dialogs", [
 				classListCtrl = {
 					name: 'class',
 					type: 'listbox',
-					label: 'Class',
+					label: 'Row style',
 					values: buildListItems(
 						editor.settings.table_row_class_list,
 						function(item) {
@@ -2205,6 +2222,7 @@ define("tinymce/tableplugin/Dialogs", [
 							{text: 'Footer', value: 'tfoot'}
 						]
 					},
+					classListCtrl,
 					{
 						type: 'listbox',
 						name: 'align',
@@ -2218,8 +2236,7 @@ define("tinymce/tableplugin/Dialogs", [
 							{text: 'Right', value: 'right'}
 						]
 					},
-					{label: 'Height', name: 'height'},
-					classListCtrl
+					{label: 'Height', name: 'height'}
 				]
 			};
 
