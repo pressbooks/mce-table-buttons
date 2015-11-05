@@ -1824,11 +1824,6 @@ define("tinymce/tableplugin/Dialogs", [
 							{text: 'Right', value: 'right'}
 						]
 					},
-					{
-						type: 'textbox',
-						label: 'Class',
-						name: 'class',
-					},
 
 					classListCtrl
 				]
